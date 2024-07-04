@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.22
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Run lint
+        run: make lint
+
+      - name: Build
+        run: make build
+
+      - name: Run tests
+        run: make test
+
+      - name: Build Docker image
+        run: docker build -t special-status-check .
+
+      - name: Run Docker Compose
+        run: docker-compose up -d
+
+      - name: Run integration tests
+        run: |
+          sleep 10
+          curl -f http://localhost:8080/success
+          curl -f http://localhost:8080/internal || true
+          curl -f -X POST http://localhost:8080/random || true
+          curl -f http://localhost:8081/
+
+      - name: Tear down Docker Compose
+        run: docker-compose down

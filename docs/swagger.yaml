@@ -1,0 +1,59 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample api for Special Status Check Service.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Special Status Check Service API
+  version: "1.0"
+paths:
+  /internal:
+    get:
+      description: Always returns 500 Internal Server Error
+      produces:
+      - application/json
+      responses:
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Returns 500 Internal Server Error
+      tags:
+      - status
+  /random:
+    post:
+      description: Returns 200 OK, 500 Internal Server Error, or panics with 20% probability
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Returns random status
+      tags:
+      - status
+  /success:
+    get:
+      description: Always returns 200 OK
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Returns 200 OK
+      tags:
+      - status
+swagger: "2.0"

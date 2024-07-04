@@ -1,0 +1,39 @@
+openapi: 3.0.0
+info:
+  title: Special Status Check Service API
+  version: 1.0.0
+  description: This is a sample api for Special Status Check Service.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: API Support
+    url: http://www.swagger.io/support
+    email: support@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:8080
+paths:
+  /success:
+    get:
+      summary: Returns 200 OK
+      description: Always returns 200 OK
+      responses:
+        '200':
+          description: OK
+  /internal:
+    get:
+      summary: Returns 500 Internal Server Error
+      description: Always returns 500 Internal Server Error
+      responses:
+        '500':
+          description: Internal Server Error
+  /random:
+    post:
+      summary: Returns random status
+      description: Returns 200 OK, 500 Internal Server Error, or panics with 20% probability
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal Server Error
