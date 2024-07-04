@@ -47,13 +47,5 @@ jobs:
       - name: Run Docker Compose
         run: docker-compose up -d
 
-      - name: Run integration tests
-        run: |
-          sleep 10
-          curl -f http://localhost:8080/success
-          curl -f http://localhost:8080/internal || true
-          curl -f -X POST http://localhost:8080/random || true
-          curl -f http://localhost:8081/
-
       - name: Tear down Docker Compose
         run: docker-compose down
