@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -115,7 +116,11 @@ func TestApp_Run(t *testing.T) {
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		p, _ := os.FindProcess(os.Getpid())
-		p.Signal(os.Interrupt)
+		err := p.Signal(os.Interrupt)
+		if err != nil {
+			t.Errorf("Failed to send signal: %v", err)
+			return
+		}
 	}()
 
 	// Wait for shutdown
@@ -130,8 +135,9 @@ func TestWaitForShutdown(t *testing.T) {
 
 	// Start the server in a separate goroutine
 	go func() {
-		if err := srv.Run(); err != http.ErrServerClosed {
-			t.Fatalf("Server stopped with error: %v", err)
+		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
+			t.Errorf("Server stopped with error: %v", err)
+			return
 		}
 	}()
 
@@ -142,7 +148,11 @@ func TestWaitForShutdown(t *testing.T) {
 	go func() {
 		time.Sleep(100 * time.Millisecond)
 		p, _ := os.FindProcess(os.Getpid())
-		p.Signal(os.Interrupt)
+		err := p.Signal(os.Interrupt)
+		if err != nil {
+			t.Errorf("Failed to send signal: %v", err)
+			return
+		}
 	}()
 
 	waitForShutdown(srv)
