@@ -65,7 +65,7 @@ func TestApp_Run(t *testing.T) {
 
 	app := &App{
 		server: server.NewServer(&http.Server{
-			Addr:         ":8080",
+			Addr:         ":0", // Use dynamic port
 			Handler:      handlerWithLogger,
 			ReadTimeout:  cfg.Server.Timeouts.Read,
 			WriteTimeout: cfg.Server.Timeouts.Write,
@@ -129,7 +129,7 @@ func TestApp_Run(t *testing.T) {
 
 func TestWaitForShutdown(t *testing.T) {
 	srv := server.NewServer(&http.Server{
-		Addr:    ":8080",
+		Addr:    ":0",                          // Use dynamic port
 		Handler: http.HandlerFunc(mockHandler), // Mock handler for testing
 	})
 
@@ -157,8 +157,11 @@ func TestWaitForShutdown(t *testing.T) {
 
 	waitForShutdown(srv)
 
+	// Add delay to ensure server has shut down
+	time.Sleep(100 * time.Millisecond)
+
 	// Check if server is shut down by trying to connect
-	resp, err := http.Get("http://localhost:8080")
+	resp, err := http.Get(srv.Addr())
 	if err == nil {
 		resp.Body.Close()
 		t.Errorf("Expected server to be shut down, but it is still running")
